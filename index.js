@@ -1,15 +1,15 @@
 const express = require('express');
 const app = express();
+const requestIp = require('request-ip');
 
-// app.set('trust proxy', true);
-// Define a route that retrieves the client's IP address
+app.use(requestIp.mw());
+
 app.get('/', (req, res) => {
-  const clientIP = req.ip; // This will get the client's IP address
+  const clientIP = req.clientIp.replace('::ffff:', ''); // นำออกเพื่อให้เหลือแค่ IPv4 address
 
   res.send(`Your IP address is: ${clientIP}`);
 });
 
-// Start the server on port 3000
 app.listen(4000, () => {
   console.log('Server is running on port 4000');
 });
