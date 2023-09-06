@@ -30,14 +30,19 @@
 const express = require("express");
 const app = express();
 
-app.set("trust proxy", true); // สำคัญ: เปิดใช้งานการเชื่อถือ proxy
+app.set("trust proxy", true); // เปิดใช้งานการเชื่อถือ proxy
 
 app.get("/", (req, res) => {
-  // const clientIP = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  // ใช้ req.headers['x-forwarded-for'] เพื่อรับค่า IP address จาก Header x-forwarded-for
+  const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-  const clientIP = req.header("x-forwarded-for") || req.socket.remoteAddress;
+  // แยก IP address หากมีหลาย IP ที่คั่นด้วย "," และเลือก IP address แรก
+  const firstIP = clientIP.split(',')[0];
 
-  res.send(`Your IPv4 address is: ${clientIP}`);
+  // ลบ "::ffff:" หากมีใน IPv4 address
+  const cleanedIP = firstIP.includes('::ffff:') ? firstIP.replace('::ffff:', '') : firstIP;
+
+  res.send(`Your IPv4 address is: ${cleanedIP}`);
 });
 
 app.listen(4000, () => {
