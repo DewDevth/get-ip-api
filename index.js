@@ -10,6 +10,6 @@ app.get('/get-ip', (req, res) => {
 });
 
 // Start the server on port 3000
-app.listen(5000, () => {
-  console.log('Server is running on port 5000');
+app.listen(4000, () => {
+  console.log('Server is running on port 4000');
 });
