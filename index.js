@@ -29,18 +29,16 @@
 
 
 
-
 const express = require('express');
 const app = express();
-const requestIp = require('request-ip'); // เพิ่มโมดูล request-ip
-
-// Middleware เพื่อดึง IP address ของเครื่อง client
-app.use(requestIp.mw());
 
 app.get('/', (req, res) => {
-  const clientIP = req.clientIp; // ดึง IP address ของเครื่อง client จาก middleware
+  const clientIP = req.connection.remoteAddress; // ดึง IP address ของเครื่อง client จาก req
 
-  res.send(`Your IPv4 address is: ${clientIP}`);
+  // กรองเพื่อให้ได้เฉพาะ IPv4 address
+  const ipv4Address = clientIP.includes(':') ? clientIP.split(':').pop() : clientIP;
+
+  res.send(`Your IPv4 address is: ${ipv4Address}`);
 });
 
 app.listen(4000, () => {
