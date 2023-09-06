@@ -34,7 +34,14 @@ const app = express();
 app.set('trust proxy', true); // สำคัญ: เปิดใช้งานการเชื่อถือ proxy
 
 app.get('/', (req, res) => {
-  const clientIP = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  // const clientIP = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+
+  const clientIP = 
+  req.headers['cf-connecting-ip'] ||  
+  req.headers['x-real-ip'] ||
+  req.headers['x-forwarded-for'] ||
+  req.socket.remoteAddress || '';
 
   res.send(`Your IPv4 address is: ${clientIP}`);
 });
