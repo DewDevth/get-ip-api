@@ -1,13 +1,26 @@
 const express = require('express');
 const app = express();
-const requestIp = require('request-ip');
+const os = require('os'); // เพิ่มโมดูล os
 
-app.use(requestIp.mw());
+// ฟังก์ชันเพื่อดึง IPv4 address ของเครื่อง
+function getLocalIPv4Address() {
+  const interfaces = os.networkInterfaces();
+
+  for (const key in interfaces) {
+    for (const iface of interfaces[key]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+
+  return 'IPv4 address not found';
+}
 
 app.get('/', (req, res) => {
-  const clientIP = req.clientIp.replace('::ffff:', ''); // นำออกเพื่อให้เหลือแค่ IPv4 address
+  const clientIP = getLocalIPv4Address();
 
-  res.send(`Your IP address is: ${clientIP}`);
+  res.send(`Your IPv4 address is: ${clientIP}`);
 });
 
 app.listen(4000, () => {
