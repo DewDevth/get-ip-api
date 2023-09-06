@@ -28,17 +28,15 @@
 // });
 
 
-
 const express = require('express');
 const app = express();
 
+app.set('trust proxy', true); // สำคัญ: เปิดใช้งานการเชื่อถือ proxy
+
 app.get('/', (req, res) => {
-  const clientIP = req.connection.remoteAddress; // ดึง IP address ของเครื่อง client จาก req
+  const clientIP = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-  // กรองเพื่อให้ได้เฉพาะ IPv4 address
-  const ipv4Address = clientIP.includes(':') ? clientIP.split(':').pop() : clientIP;
-
-  res.send(`Your IPv4 address is: ${ipv4Address}`);
+  res.send(`Your IPv4 address is: ${clientIP}`);
 });
 
 app.listen(4000, () => {
